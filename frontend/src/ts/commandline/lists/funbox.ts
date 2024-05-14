@@ -1,5 +1,8 @@
-import * as Funbox from "../../test/funbox";
+import * as Funbox from "../../test/funbox/funbox";
 import * as TestLogic from "../../test/test-logic";
+import * as ManualRestart from "../../test/manual-restart-tracker";
+import Config from "../../config";
+import { areFunboxesCompatible } from "../../test/funbox/funbox-validation";
 
 const subgroup: MonkeyTypes.CommandsSubgroup = {
   title: "Funbox...",
@@ -11,7 +14,7 @@ const subgroup: MonkeyTypes.CommandsSubgroup = {
       configValue: "none",
       alias: "off",
       exec: (): void => {
-        if (Funbox.setFunbox("none", null)) {
+        if (Funbox.setFunbox("none")) {
           TestLogic.restart();
         }
       },
@@ -29,20 +32,40 @@ const commands: MonkeyTypes.Command[] = [
   },
 ];
 
-function update(funboxes: MonkeyTypes.FunboxObject[]): void {
-  funboxes.forEach((funbox) => {
+function update(funboxes: MonkeyTypes.FunboxMetadata[]): void {
+  subgroup.list = [];
+  subgroup.list.push({
+    id: "changeFunboxNone",
+    display: "none",
+    configValue: "none",
+    alias: "off",
+    sticky: true,
+    exec: (): void => {
+      ManualRestart.set();
+      if (Funbox.setFunbox("none")) {
+        TestLogic.restart();
+      }
+    },
+  });
+  for (const funbox of funboxes) {
     subgroup.list.push({
       id: "changeFunbox" + funbox.name,
       display: funbox.name.replace(/_/g, " "),
+      available: () => {
+        if (Config.funbox.split("#").includes(funbox.name)) return true;
+        return areFunboxesCompatible(Config.funbox, funbox.name);
+      },
+      sticky: true,
       alias: funbox.alias,
       configValue: funbox.name,
+      configValueMode: "include",
       exec: (): void => {
-        if (Funbox.setFunbox(funbox.name, funbox.type)) {
-          TestLogic.restart();
-        }
+        Funbox.toggleFunbox(funbox.name);
+        ManualRestart.set();
+        TestLogic.restart();
       },
     });
-  });
+  }
 }
 
 export default commands;

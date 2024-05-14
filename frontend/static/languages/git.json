@@ -1,6 +1,5 @@
 {
   "name": "git",
-  "leftToRight": true,
   "noLazyMode": true,
   "words": [
     "git",
@@ -50,6 +49,10 @@
     "archive",
     "bundle",
     "build",
-    "cherrypick"
+    "cherrypick",
+    "@",
+    "-f",
+    "--force-if-includes",
+    "--force-with-lease"
   ]
 }

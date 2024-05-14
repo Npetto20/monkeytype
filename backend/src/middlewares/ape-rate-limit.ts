@@ -5,8 +5,9 @@ import rateLimit, {
   RateLimitRequestHandler,
   Options,
 } from "express-rate-limit";
+import { isDevEnvironment } from "../utils/misc";
 
-const REQUEST_MULTIPLIER = process.env.MODE === "dev" ? 1 : 1;
+const REQUEST_MULTIPLIER = isDevEnvironment() ? 1 : 1;
 
 const getKey = (req: MonkeyTypes.Request, _res: Response): string => {
   return req?.ctx?.decodedToken?.uid;
@@ -35,24 +36,13 @@ const apeRateLimiter = rateLimit({
 });
 
 export function withApeRateLimiter(
-  defaultRateLimiter: RateLimitRequestHandler
+  defaultRateLimiter: RateLimitRequestHandler,
+  apeRateLimiterOverride?: RateLimitRequestHandler
 ): RequestHandler {
   return (req: MonkeyTypes.Request, res: Response, next: NextFunction) => {
     if (req.ctx.decodedToken.type === "ApeKey") {
-      return apeRateLimiter(req, res, next);
-    }
-
-    return defaultRateLimiter(req, res, next);
-  };
-}
-
-export function withCustomApeRateLimiter(
-  customRateLimiter: RateLimitRequestHandler,
-  defaultRateLimiter: RateLimitRequestHandler
-): RequestHandler {
-  return (req: MonkeyTypes.Request, res: Response, next: NextFunction) => {
-    if (req.ctx.decodedToken.type === "ApeKey") {
-      return customRateLimiter(req, res, next);
+      const rateLimiter = apeRateLimiterOverride ?? apeRateLimiter;
+      return rateLimiter(req, res, next);
     }
 
     return defaultRateLimiter(req, res, next);

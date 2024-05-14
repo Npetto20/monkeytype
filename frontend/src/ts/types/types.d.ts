@@ -1,34 +1,42 @@
 declare namespace MonkeyTypes {
-  type Difficulty = "normal" | "expert" | "master";
+  type PageName =
+    | "loading"
+    | "test"
+    | "settings"
+    | "about"
+    | "account"
+    | "login"
+    | "profile"
+    | "profileSearch"
+    | "404";
 
-  type CustomModes = "custom";
-
-  type Mode = "time" | "words" | "quote" | "zen" | CustomModes;
-
-  type Mode2<M extends Mode> = keyof PersonalBests[M];
-
-  type Mode2Custom<M extends Mode> = Mode2<M> | "custom";
-
-  interface LanguageGroup {
+  type LanguageGroup = {
     name: string;
     languages: string[];
-  }
+  };
+
+  type AddNotificationOptions = {
+    important?: boolean;
+    duration?: number;
+    customTitle?: string;
+    customIcon?: string;
+    closeCallback?: () => void;
+    allowHTML?: boolean;
+  };
 
   type Accents = [string, string][];
 
-  interface LanguageObject {
+  type LanguageObject = {
     name: string;
-    leftToRight: boolean;
+    rightToLeft: boolean;
     noLazyMode?: boolean;
     ligatures?: boolean;
+    orderedByFrequency?: boolean;
     words: string[];
-    accents: Accents;
+    additionalAccents: Accents;
     bcp47?: string;
-  }
-
-  type WordsModes = number;
-
-  type TimeModes = number;
+    originalPunctuation?: boolean;
+  };
 
   type DefaultWordsModes = 10 | 25 | 50 | 100;
 
@@ -36,595 +44,217 @@ declare namespace MonkeyTypes {
 
   type QuoteModes = "short" | "medium" | "long" | "thicc";
 
-  type QuoteLength = -3 | -2 | -1 | 0 | 1 | 2 | 3;
-
-  type CaretStyle =
-    | "off"
-    | "default"
-    | "block"
-    | "outline"
-    | "underline"
-    | "carrot"
-    | "banana";
-
-  type ConfidenceMode = "off" | "on" | "max";
-
-  type TimerStyle = "bar" | "text" | "mini";
-
-  type RandomTheme = "off" | "on" | "fav" | "light" | "dark" | "custom";
-
-  type TimerColor = "black" | "sub" | "text" | "main";
-
-  type TimerOpacity = "0.25" | "0.5" | "0.75" | "1";
-
-  type StopOnError = "off" | "word" | "letter";
-
-  type KeymapMode = "off" | "static" | "react" | "next";
-
-  type KeymapStyle =
-    | "staggered"
-    | "alice"
-    | "matrix"
-    | "split"
-    | "split_matrix";
-
-  type KeymapLegendStyle = "lowercase" | "uppercase" | "blank" | "dynamic";
-
-  type KeymapShowTopRow = "always" | "layout" | "never";
-
-  type ShowAverage = "off" | "wpm" | "acc" | "both";
-
-  type TapeMode = "off" | "letter" | "word";
-
-  type SingleListCommandLine = "manual" | "on";
-
-  /*
-    off = off
-    1 = click
-    2 = beep
-    3 = pop
-    4 = nk creams
-    5 = typewriter
-    6 = osu
-    7 = hitmarker
-    8 = sine
-    9 = sawtooth
-    10 = square
-    11 = triangle
-  */
-  type PlaySoundOnClick =
-    | "off"
-    | "1"
-    | "2"
-    | "3"
-    | "4"
-    | "5"
-    | "6"
-    | "7"
-    | "8"
-    | "9"
-    | "10"
-    | "11";
-
-  type SoundVolume = "0.1" | "0.5" | "1.0";
-
-  type PaceCaret = "off" | "average" | "pb" | "last" | "custom" | "daily";
-
-  type PageWidth = "100" | "125" | "150" | "200" | "max";
-
-  type ChartStyle = "line" | "scatter";
-
-  type MinimumWordsPerMinute = "off" | "custom";
-
-  type HighlightMode = "off" | "letter" | "word";
-
-  type Ads = "off" | "result" | "on" | "sellout";
-
-  type MinimumAccuracy = "off" | "custom";
-
-  type RepeatQuotes = "off" | "typing";
-
-  type OppositeShiftMode = "off" | "on" | "keymap";
-
-  type CustomBackgroundSize = "cover" | "contain" | "max";
-
-  type CustomBackgroundFilter = [number, number, number, number, number];
-
-  /*
-    off = off
-    1 = mellow
-    2 = high
-    3 = ultra
-    4 = over 9000
-  */
-  type MonkeyPowerLevel = "off" | "1" | "2" | "3" | "4";
-
-  type MinimumBurst = "off" | "fixed" | "flex";
-
-  type FunboxObjectType = "script" | "style";
-
-  type IndicateTypos = "off" | "below" | "replace";
-
-  type CustomLayoutFluid = `${string}#${string}#${string}`;
-
   type CustomLayoutFluidSpaces =
-    | CustomLayoutFluid
+    | SharedTypes.Config.CustomLayoutFluid
     | `${string} ${string} ${string}`;
 
-  interface HistoryChartData {
+  type HistoryChartData = {
     x: number;
     y: number;
     wpm: number;
     acc: number;
     mode: string;
-    mode2: string | number;
+    mode2: string;
     punctuation: boolean;
     language: string;
     timestamp: number;
     difficulty: string;
     raw: number;
     isPb: boolean;
-  }
+  };
 
-  interface AccChartData {
+  type AccChartData = {
     x: number;
     y: number;
     errorRate: number;
-  }
+  };
 
-  interface ActivityChartDataPoint {
+  type OtherChartData = {
+    x: number;
+    y: number;
+  };
+
+  type ActivityChartDataPoint = {
     x: number;
     y: number;
     amount?: number;
-  }
+  };
 
-  interface FontObject {
+  type FontObject = {
     name: string;
     display?: string;
+  };
+
+  type FunboxWordsFrequency = "normal" | "zipf";
+
+  type FunboxWordOrder = "normal" | "reverse";
+
+  type FunboxProperty =
+    | "symmetricChars"
+    | "conflictsWithSymmetricChars"
+    | "changesWordsVisibility"
+    | "speaks"
+    | "unspeakable"
+    | "changesLayout"
+    | "ignoresLayout"
+    | "usesLayout"
+    | "ignoresLanguage"
+    | "noLigatures"
+    | "noLetters"
+    | "changesCapitalisation"
+    | "nospace"
+    | `toPush:${number}`
+    | "noInfiniteDuration"
+    | "changesWordsFrequency"
+    | `wordOrder:${FunboxWordOrder}`;
+
+  class Wordset {
+    words: string[];
+    length: number;
+    orderedIndex: number;
+    shuffledIndexes: number[];
+    constructor(words: string[]);
+    resetIndexes(): void;
+    randomWord(mode: MonkeyTypes.FunboxWordsFrequency): string;
+    shuffledWord(): string;
+    generateShuffledIndexes(): void;
+    nextWord(): string;
   }
 
-  interface FunboxObject {
+  class Section {
+    public title: string;
+    public author: string;
+    public words: string[];
+    constructor(title: string, author: string, words: string[]);
+  }
+
+  type FunboxFunctions = {
+    getWord?: (wordset?: Wordset, wordIndex?: number) => string;
+    punctuateWord?: (word: string) => string;
+    withWords?: (words?: string[]) => Promise<Wordset>;
+    alterText?: (word: string) => string;
+    applyConfig?: () => void;
+    applyGlobalCSS?: () => void;
+    clearGlobal?: () => void;
+    rememberSettings?: () => void;
+    toggleScript?: (params: string[]) => void;
+    pullSection?: (language?: string) => Promise<Section | false>;
+    handleSpace?: () => void;
+    handleChar?: (char: string) => string;
+    isCharCorrect?: (char: string, originalChar: string) => boolean;
+    preventDefaultEvent?: (
+      event: JQuery.KeyDownEvent<Document, null, Document, Document>
+    ) => Promise<boolean>;
+    handleKeydown?: (
+      event: JQuery.KeyDownEvent<Document, null, Document, Document>
+    ) => Promise<void>;
+    getResultContent?: () => string;
+    start?: () => void;
+    restart?: () => void;
+    getWordHtml?: (char: string, letterTag?: boolean) => string;
+    getWordsFrequencyMode?: () => FunboxWordsFrequency;
+  };
+
+  type FunboxForcedConfig = Record<string, SharedTypes.ConfigValue[]>;
+
+  type FunboxMetadata = {
     name: string;
-    type: FunboxObjectType;
     info: string;
+    canGetPb?: boolean;
     alias?: string;
-    affectsWordGeneration?: boolean;
-  }
+    forcedConfig?: MonkeyTypes.FunboxForcedConfig;
+    properties?: FunboxProperty[];
+    functions?: FunboxFunctions;
+    hasCSS?: boolean;
+  };
 
-  interface CustomText {
-    text: string[];
-    isWordRandom: boolean;
-    isTimeRandom: boolean;
-    word: number;
-    time: number;
-    delimiter: string;
-    textLen?: number;
-  }
-
-  interface PresetConfig extends MonkeyTypes.Config {
+  type PresetConfig = {
     tags: string[];
-  }
+  } & SharedTypes.Config;
 
-  interface Preset {
-    _id: string;
-    name: string;
+  type SnapshotPreset = SharedTypes.DBConfigPreset & {
     display: string;
-    config: ConfigChanges;
-  }
+  };
 
-  interface PersonalBest {
-    acc: number;
-    consistency: number;
-    difficulty: Difficulty;
-    lazyMode: boolean;
-    language: string;
-    punctuation: boolean;
-    raw: number;
-    wpm: number;
-    timestamp: number;
-  }
-
-  interface PersonalBests {
-    time: {
-      [key: number]: PersonalBest[];
-    };
-    words: {
-      [key: number]: PersonalBest[];
-    };
-    quote: { [quote: string]: PersonalBest[] };
-    custom: { custom: PersonalBest[] };
-    zen: {
-      zen: PersonalBest[];
-    };
-  }
-
-  interface Tag {
-    _id: string;
-    name: string;
-    display: string;
-    personalBests?: PersonalBests;
-    active?: boolean;
-  }
-
-  interface RawCustomTheme {
+  type RawCustomTheme = {
     name: string;
     colors: string[];
-  }
+  };
 
-  interface CustomTheme extends RawCustomTheme {
+  type CustomTheme = {
     _id: string;
-  }
+  } & RawCustomTheme;
 
-  interface TypingStats {
-    timeTyping: number;
-    startedTests: number;
-    completedTests: number;
-  }
-
-  interface ChartData {
-    wpm: number[];
-    raw: number[];
-    err: number[];
-    unsmoothedRaw?: number[];
-  }
-
-  interface KeyStats {
-    average: number;
-    sd: number;
-  }
-
-  interface IncompleteTest {
-    acc: number;
-    seconds: number;
-  }
-
-  interface Result<M extends Mode> {
-    _id: string;
-    wpm: number;
-    rawWpm: number;
-    charStats: number[];
-    correctChars?: number; // --------------
-    incorrectChars?: number; // legacy results
-    acc: number;
-    mode: M;
-    mode2: Mode2<M>;
-    quoteLength: number;
-    timestamp: number;
-    restartCount: number;
-    incompleteTestSeconds: number;
-    incompleteTests: IncompleteTest[];
-    testDuration: number;
-    afkDuration: number;
-    tags: string[];
-    consistency: number;
-    keyConsistency: number;
-    chartData: ChartData | "toolong";
-    uid: string;
-    keySpacingStats: KeyStats;
-    keyDurationStats: KeyStats;
-    isPb?: boolean;
-    bailedOut?: boolean;
-    blindMode?: boolean;
-    lazyMode?: boolean;
-    difficulty: Difficulty;
-    funbox?: string;
-    language: string;
-    numbers?: boolean;
-    punctuation?: boolean;
-    hash?: string;
-  }
-
-  interface ApeKey {
-    name: string;
-    enabled: boolean;
-    createdOn: number;
-    modifiedOn: number;
-    lastUsedOn: number;
-  }
-
-  interface ApeKeys {
-    [key: string]: ApeKey;
-  }
-
-  interface Config {
-    theme: string;
-    themeLight: string;
-    themeDark: string;
-    autoSwitchTheme: boolean;
-    customTheme: boolean;
-    customThemeColors: string[];
-    favThemes: string[];
-    showKeyTips: boolean;
-    showLiveWpm: boolean;
-    showTimerProgress: boolean;
-    smoothCaret: boolean;
-    quickRestart: "off" | "esc" | "tab";
-    punctuation: boolean;
-    numbers: boolean;
-    words: WordsModes;
-    time: TimeModes;
-    mode: Mode;
-    quoteLength: QuoteLength[];
-    language: string;
-    fontSize: number;
-    freedomMode: boolean;
-    resultFilters?: ResultFilters | null;
-    difficulty: Difficulty;
-    blindMode: boolean;
-    quickEnd: boolean;
-    caretStyle: CaretStyle;
-    paceCaretStyle: CaretStyle;
-    flipTestColors: boolean;
-    layout: string;
-    funbox: string;
-    confidenceMode: ConfidenceMode;
-    indicateTypos: IndicateTypos;
-    timerStyle: TimerStyle;
-    colorfulMode: boolean;
-    randomTheme: RandomTheme;
-    timerColor: TimerColor;
-    timerOpacity: TimerOpacity;
-    stopOnError: StopOnError;
-    showAllLines: boolean;
-    keymapMode: KeymapMode;
-    keymapStyle: KeymapStyle;
-    keymapLegendStyle: KeymapLegendStyle;
-    keymapLayout: string;
-    keymapShowTopRow: KeymapShowTopRow;
-    fontFamily: string;
-    smoothLineScroll: boolean;
-    alwaysShowDecimalPlaces: boolean;
-    alwaysShowWordsHistory: boolean;
-    singleListCommandLine: SingleListCommandLine;
-    capsLockWarning: boolean;
-    playSoundOnError: boolean;
-    playSoundOnClick: PlaySoundOnClick;
-    soundVolume: SoundVolume;
-    startGraphsAtZero: boolean;
-    showOutOfFocusWarning: boolean;
-    paceCaret: PaceCaret;
-    paceCaretCustomSpeed: number;
-    repeatedPace: boolean;
-    pageWidth: PageWidth;
-    chartAccuracy: boolean;
-    chartStyle: ChartStyle;
-    minWpm: MinimumWordsPerMinute;
-    minWpmCustomSpeed: number;
-    highlightMode: HighlightMode;
-    alwaysShowCPM: boolean;
-    ads: Ads;
-    hideExtraLetters: boolean;
-    strictSpace: boolean;
-    minAcc: MinimumAccuracy;
-    minAccCustom: number;
-    showLiveAcc: boolean;
-    showLiveBurst: boolean;
-    monkey: boolean;
-    repeatQuotes: RepeatQuotes;
-    oppositeShiftMode: OppositeShiftMode;
-    customBackground: string;
-    customBackgroundSize: CustomBackgroundSize;
-    customBackgroundFilter: CustomBackgroundFilter;
-    customLayoutfluid: CustomLayoutFluid;
-    monkeyPowerLevel: MonkeyPowerLevel;
-    minBurst: MinimumBurst;
-    minBurstCustomSpeed: number;
-    burstHeatmap: boolean;
-    britishEnglish: boolean;
-    lazyMode: boolean;
-    showAverage: ShowAverage;
-    tapeMode: TapeMode;
-  }
-
-  type ConfigValues =
-    | string
-    | number
-    | boolean
-    | string[]
-    | MonkeyTypes.QuoteLength[]
-    | MonkeyTypes.ResultFilters
-    | MonkeyTypes.CustomBackgroundFilter
-    | null
-    | undefined;
-
-  interface ConfigChanges extends Partial<MonkeyTypes.Config> {
+  type ConfigChanges = {
     tags?: string[];
-  }
+  } & Partial<SharedTypes.Config>;
 
-  interface DefaultConfig extends Config {
-    wordCount: WordsModes;
-  }
-
-  interface LeaderboardMemory {
+  type LeaderboardMemory = {
     time: {
-      [key in 15 | 60]: {
-        [language: string]: number;
-      };
+      [key in "15" | "60"]: Record<string, number>;
     };
-  }
+  };
 
-  interface Leaderboards {
+  type Leaderboards = {
     time: {
-      [key in 15 | 60]: LeaderboardEntry[];
+      [key in 15 | 60]: SharedTypes.LeaderboardEntry[];
     };
-  }
+  };
 
-  interface LeaderboardEntry {
-    uid: string;
-    difficulty: string;
-    timestamp: number;
-    language: string;
-    wpm: number;
-    consistency: number | "-";
-    punctuation: boolean;
-    acc: number;
-    raw: number;
-    uid?: string;
-    name: string;
-    discordId?: string;
-    discordAvatar?: string;
-    badgeId?: number;
-    rank: number;
-    count?: number;
-    hidden?: boolean;
-  }
+  type QuoteRatings = Record<string, Record<number, number>>;
 
-  interface QuoteRatings {
-    [language: string]: {
-      [id: number]: number;
+  type UserTag = SharedTypes.UserTag & {
+    active?: boolean;
+    display: string;
+  };
+
+  type Snapshot = Omit<
+    SharedTypes.User,
+    | "timeTyping"
+    | "startedTests"
+    | "completedTests"
+    | "profileDetails"
+    | "streak"
+    | "resultFilterPresets"
+    | "tags"
+    | "xp"
+  > & {
+    typingStats: {
+      timeTyping: number;
+      startedTests: number;
+      completedTests: number;
     };
-  }
-
-  interface Snapshot {
-    banned?: boolean;
-    emailVerified?: boolean;
-    quoteRatings?: QuoteRatings;
-    results?: Result<Mode>[];
-    verified?: boolean;
-    personalBests?: PersonalBests;
-    name: string;
-    customThemes: CustomTheme[];
-    presets?: Preset[];
-    tags: Tag[];
-    favouriteThemes?: string[];
-    lbMemory?: LeaderboardMemory;
-    typingStats?: TypingStats;
-    quoteMod?: boolean;
-    discordId?: string;
-    config?: Config;
-    favoriteQuotes: FavoriteQuotes;
-    needsToChangeName?: boolean;
-    discordAvatar?: string;
-    details?: UserDetails;
-    inventory?: UserInventory;
-    addedAt: number;
-    filterPresets: ResultFilters[];
-    xp: number;
+    details?: SharedTypes.UserProfileDetails;
     inboxUnreadSize: number;
     streak: number;
     maxStreak: number;
-  }
-
-  interface UserDetails {
-    bio?: string;
-    keyboard?: string;
-    socialProfiles: {
-      twitter?: string;
-      github?: string;
-      website?: string;
-    };
-  }
-
-  interface UserInventory {
-    badges: Badge[];
-  }
-
-  interface Badge {
-    id: number;
-    selected?: boolean;
-  }
-
-  type FavoriteQuotes = Record<string, string[]>;
-
-  // Converting this to an interface causes a TS error
-  type PartialRecord<K extends keyof any, T> = {
-    [P in K]?: T;
+    filterPresets: SharedTypes.ResultFilters[];
+    isPremium: boolean;
+    streakHourOffset?: number;
+    config: SharedTypes.Config;
+    tags: UserTag[];
+    presets: SnapshotPreset[];
+    results?: SharedTypes.Result<SharedTypes.Config.Mode>[];
+    xp: number;
   };
 
-  interface ResultFilters {
-    _id: string;
-    name: string;
-    pb: {
-      no: boolean;
-      yes: boolean;
-    };
-    difficulty: {
-      normal: boolean;
-      expert: boolean;
-      master: boolean;
-    };
-    mode: {
-      words: boolean;
-      time: boolean;
-      quote: boolean;
-      zen: boolean;
-      custom: boolean;
-    };
-    words: {
-      10: boolean;
-      25: boolean;
-      50: boolean;
-      100: boolean;
-      custom: boolean;
-    };
-    time: {
-      15: boolean;
-      30: boolean;
-      60: boolean;
-      120: boolean;
-      custom: boolean;
-    };
-    quoteLength: {
-      short: boolean;
-      medium: boolean;
-      long: boolean;
-      thicc: boolean;
-    };
-    punctuation: {
-      on: boolean;
-      off: boolean;
-    };
-    numbers: {
-      on: boolean;
-      off: boolean;
-    };
-    date: {
-      last_day: boolean;
-      last_week: boolean;
-      last_month: boolean;
-      last_3months: boolean;
-      all: boolean;
-    };
-    tags: {
-      [tagId: string]: boolean;
-    };
-    language: {
-      [language: string]: boolean;
-    };
-    funbox: {
-      none?: boolean;
-      [funbox: string]: boolean;
-    };
-  }
+  type Group<
+    G extends keyof SharedTypes.ResultFilters = keyof SharedTypes.ResultFilters
+  > = G extends G ? SharedTypes.ResultFilters[G] : never;
 
-  type Group = keyof ResultFilters;
+  type Filter<G extends Group = Group> =
+    G extends keyof SharedTypes.ResultFilters
+      ? keyof SharedTypes.ResultFilters[G]
+      : never;
 
-  type Filter<G extends Group> = keyof ResultFilters[G];
-
-  interface TimerStats {
+  type TimerStats = {
     dateNow: number;
     now: number;
     expected: number;
     nextDelay: number;
-  }
+  };
 
-  interface Global {
-    snapshot(): Snapshot | undefined;
-    config: Config;
-    toggleFilterDebug(): void;
-    glarsesMode(): void;
-    stats(): void;
-    replay(): string;
-    enableTimerDebug(): void;
-    getTimerStats(): TimerStats[];
-    toggleUnsmoothedRaw(): void;
-    enableSpacingDebug(): void;
-    noGoogleNoMo(): void;
-    egVideoListener(options: Record<string, string>): void;
-    wpmCalculationDebug(): void;
-  }
-
-  interface GithubRelease {
+  type GithubRelease = {
     url: string;
     assets_url: string;
     upload_url: string;
@@ -658,7 +288,7 @@ declare namespace MonkeyTypes {
     prerelease: boolean;
     created_at: string;
     published_at: string;
-    assets: any[];
+    assets: unknown[];
     tarball_url: string;
     zipball_url: string;
     body: string;
@@ -667,60 +297,70 @@ declare namespace MonkeyTypes {
       total_count: number;
       [reaction: string]: number | string;
     };
-  }
+  };
 
-  interface Command {
+  type CommandExecOptions = {
+    input?: string;
+    commandlineModal?: unknown;
+  };
+
+  type Command = {
     id: string;
     display: string;
+    singleListDisplay?: string;
+    singleListDisplayNoIcon?: string;
     subgroup?: CommandsSubgroup;
     found?: boolean;
     icon?: string;
-    noIcon?: boolean;
     sticky?: boolean;
     alias?: string;
     input?: boolean;
     visible?: boolean;
+    customStyle?: string;
+    opensModal?: boolean;
     defaultValue?: () => string;
+    configKey?: keyof SharedTypes.Config;
     configValue?: string | number | boolean | number[];
-    configValueMode?: string;
-    exec?: (input?: string) => void;
+    configValueMode?: "include";
+    exec?: (options: CommandExecOptions) => void;
     hover?: () => void;
-    available?: () => void;
-    beforeSubgroup?: () => void;
+    available?: () => boolean;
+    active?: () => boolean;
     shouldFocusTestUI?: boolean;
-  }
+    customData?: Record<string, string>;
+  };
 
-  interface CommandsSubgroup {
+  type CommandsSubgroup = {
     title: string;
-    configKey?: keyof Config;
+    configKey?: keyof SharedTypes.Config;
     list: Command[];
-  }
+    beforeList?: () => void;
+  };
 
-  interface Theme {
+  type Theme = {
     name: string;
     bgColor: string;
     mainColor: string;
-  }
+    subColor: string;
+    textColor: string;
+  };
 
-  interface Quote {
+  type Quote = {
     text: string;
+    britishText?: string;
     source: string;
     length: number;
     id: number;
     group: number;
     language: string;
     textSplit?: string[];
-  }
+  };
 
-  interface PSA {
-    sticky?: boolean;
-    message: string;
-    _id: string;
-    level?: number;
-    date?: number;
-  }
+  type QuoteWithTextSplit = Quote & {
+    textSplit: string[];
+  };
 
-  interface ThemeColors {
+  type ThemeColors = {
     bg: string;
     main: string;
     caret: string;
@@ -731,45 +371,40 @@ declare namespace MonkeyTypes {
     errorExtra: string;
     colorfulError: string;
     colorfulErrorExtra: string;
-  }
+  };
 
-  interface Layout {
+  type Layout = {
     keymapShowTopRow: boolean;
+    matrixShowRightColumn?: boolean;
     type: "iso" | "ansi" | "ortho" | "matrix";
     keys: Keys;
-  }
+  };
 
-  interface Layouts {
-    [layout: string]: Layout;
-  }
-  interface Keys {
+  type Layouts = Record<string, Layout>;
+  type Keys = {
     row1: string[];
     row2: string[];
     row3: string[];
     row4: string[];
     row5: string[];
-  }
+  };
 
-  interface WordsPerMinuteAndRaw {
+  type WpmAndRaw = {
     wpm: number;
     raw: number;
-  }
+  };
 
-  interface Challenge {
+  type Challenge = {
     name: string;
     display: string;
     autoRole: boolean;
     type: string;
     parameters: (string | number | boolean)[];
     message: string;
-    requirements: {
-      [requirement: string]: {
-        [parameter: string]: string | number | boolean;
-      };
-    };
-  }
+    requirements: Record<string, Record<string, string | number | boolean>>;
+  };
 
-  interface UserBadge {
+  type UserBadge = {
     id: number;
     name: string;
     description: string;
@@ -777,31 +412,39 @@ declare namespace MonkeyTypes {
     background?: string;
     color?: string;
     customStyle?: string;
-  }
+  };
 
-  interface MonkeyMail {
+  type MonkeyMail = {
     id: string;
     subject: string;
     body: string;
     timestamp: number;
     read: boolean;
     rewards: AllRewards[];
-  }
+  };
 
-  interface Reward<T> {
+  type Reward<T> = {
     type: string;
     item: T;
-  }
+  };
 
-  interface XpReward extends Reward<number> {
+  type XpReward = {
     type: "xp";
     item: number;
-  }
+  } & Reward<number>;
 
-  interface BadgeReward extends Reward<Badge> {
+  type BadgeReward = {
     type: "badge";
-    item: Badge;
-  }
+    item: SharedTypes.Badge;
+  } & Reward<SharedTypes.Badge>;
 
   type AllRewards = XpReward | BadgeReward;
+
+  type TypingSpeedUnitSettings = {
+    fromWpm: (number: number) => number;
+    toWpm: (number: number) => number;
+    fullUnitString: string;
+    histogramDataBucketSize: number;
+    historyStepSize: number;
+  };
 }

@@ -66,16 +66,16 @@
 
 @keyframes flashHighlight {
   0% {
-    background-color: var(--bg-color);
+    background-color: var(--bg-color) !important;
   }
   10% {
-    background-color: var(--main-color);
+    background-color: var(--main-color) !important;
   }
   40% {
-    background-color: var(--main-color);
+    background-color: var(--main-color) !important;
   }
   100% {
-    background-color: var(--bg-color);
+    background-color: var(--bg-color) !important;
   }
 }
 
@@ -97,5 +97,17 @@
   }
   100% {
     background: hsl(120, 39%, 49%);
+  }
+}
+
+@keyframes scanline {
+  0% {
+    bottom: 100%;
+  }
+  80% {
+    bottom: 100%;
+  }
+  100% {
+    bottom: 0%;
   }
 }

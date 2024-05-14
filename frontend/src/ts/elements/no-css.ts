@@ -1,4 +1,4 @@
-import { CLIENT_VERSION } from "../version";
+import { envConfig } from "../constants/env-config";
 
 $("#nocss .requestedStylesheets").html(
   "Requested stylesheets:<br>" +
@@ -19,7 +19,7 @@ $("#nocss .requestedJs").html(
       .filter((l) => /(\/js\/mon|\/js\/vendor)/gi.test(l))
       .join("<br>") +
     "<br><br>Client version:<br>" +
-    CLIENT_VERSION
+    envConfig.clientVersion
 );
 
 if (window.navigator.userAgent.toLowerCase().includes("mac")) {
@@ -31,6 +31,7 @@ if (window.navigator.userAgent.toLowerCase().includes("mac")) {
         border-radius: 1rem;
         background: #2c2e31;
         margin-top: 1rem;
+        margin-bottom: 1rem;
       "
     >
       Cmd
@@ -66,6 +67,7 @@ if (window.navigator.userAgent.toLowerCase().includes("mac")) {
         display: inline-block;
         border-radius: 1rem;
         background: #2c2e31;
+        margin-bottom: 1rem;
       "
     >
       Ctrl

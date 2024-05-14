@@ -1,8 +1,11 @@
 import Config from "../config";
-import { randomQuote } from "../test/test-words";
-import { getMode2 } from "../utils/misc";
+import { currentQuote } from "../test/test-words";
+import { getMode2, isPopupVisible } from "../utils/misc";
 import * as CustomText from "../test/custom-text";
 import { compressToURI } from "lz-ts";
+import * as Skeleton from "../utils/skeleton";
+
+const wrapperId = "shareTestSettingsPopupWrapper";
 
 function getCheckboxValue(checkbox: string): boolean {
   return $(`#shareTestSettingsPopupWrapper label.${checkbox} input`).prop(
@@ -11,13 +14,13 @@ function getCheckboxValue(checkbox: string): boolean {
 }
 
 type SharedTestSettings = [
-  MonkeyTypes.Mode | null,
-  MonkeyTypes.Mode2<MonkeyTypes.Mode> | null,
-  MonkeyTypes.CustomText | null,
+  SharedTypes.Config.Mode | null,
+  SharedTypes.Config.Mode2<SharedTypes.Config.Mode> | null,
+  SharedTypes.CustomTextData | null,
   boolean | null,
   boolean | null,
   string | null,
-  MonkeyTypes.Difficulty | null,
+  SharedTypes.Config.Difficulty | null,
   string | null
 ];
 
@@ -41,19 +44,12 @@ function updateURL(): void {
   if (getCheckboxValue("mode2")) {
     settings[1] = getMode2(
       Config,
-      randomQuote
-    ) as MonkeyTypes.Mode2<MonkeyTypes.Mode>;
+      currentQuote
+    ) as SharedTypes.Config.Mode2<SharedTypes.Config.Mode>;
   }
 
   if (getCheckboxValue("customText")) {
-    settings[2] = {
-      text: CustomText.text,
-      isWordRandom: CustomText.isWordRandom,
-      isTimeRandom: CustomText.isTimeRandom,
-      word: CustomText.word,
-      time: CustomText.time,
-      delimiter: CustomText.delimiter,
-    };
+    settings[2] = CustomText.getData();
   }
 
   if (getCheckboxValue("punctuation")) {
@@ -96,19 +92,20 @@ function updateSubgroups(): void {
 }
 
 export function show(): void {
-  if ($("#shareTestSettingsPopupWrapper").hasClass("hidden")) {
+  Skeleton.append(wrapperId, "popups");
+  if (!isPopupVisible(wrapperId)) {
     updateURL();
     updateSubgroups();
     $("#shareTestSettingsPopupWrapper")
       .stop(true, true)
       .css("opacity", 0)
       .removeClass("hidden")
-      .animate({ opacity: 1 }, 100);
+      .animate({ opacity: 1 }, 125);
   }
 }
 
-export async function hide(): Promise<void> {
-  if (!$("#shareTestSettingsPopupWrapper").hasClass("hidden")) {
+async function hide(): Promise<void> {
+  if (isPopupVisible(wrapperId)) {
     $("#shareTestSettingsPopupWrapper")
       .stop(true, true)
       .css("opacity", 1)
@@ -116,9 +113,10 @@ export async function hide(): Promise<void> {
         {
           opacity: 0,
         },
-        100,
+        125,
         () => {
           $("#shareTestSettingsPopupWrapper").addClass("hidden");
+          Skeleton.remove(wrapperId);
         }
       );
   }
@@ -129,18 +127,21 @@ $(`#shareTestSettingsPopupWrapper label input`).on("change", () => {
   updateSubgroups();
 });
 
+$("#shareTestSettingsPopupWrapper textarea.url").on("click", () => {
+  $("#shareTestSettingsPopupWrapper textarea.url").trigger("select");
+});
+
 $("#shareTestSettingsPopupWrapper").on("mousedown", (e) => {
   if ($(e.target).attr("id") === "shareTestSettingsPopupWrapper") {
-    hide();
+    void hide();
   }
 });
 
 $(document).on("keydown", (event) => {
-  if (
-    event.key === "Escape" &&
-    !$("#shareTestSettingsPopupWrapper").hasClass("hidden")
-  ) {
-    hide();
+  if (event.key === "Escape" && isPopupVisible(wrapperId)) {
+    void hide();
     event.preventDefault();
   }
 });
+
+Skeleton.save(wrapperId);
